@@ -95,9 +95,7 @@ class ScrollSpy extends BaseComponent {
       this._observer = this._getNewObserver()
     }
 
-    for (const section of this._observableSections) {
-      this._observer.observe(section)
-    }
+    this._observableSections.forEach(section => this._observer.observe(section))
   }
 
   dispose() {
@@ -165,9 +163,8 @@ class ScrollSpy extends BaseComponent {
       parent.classList.remove(CLASS_NAME_ACTIVE)
     }
 
-    for (const node of SelectorEngine.find(`.${CLASS_NAME_ACTIVE}`, parent)) {
-      node.classList.remove(CLASS_NAME_ACTIVE)
-    }
+    SelectorEngine.find(`.${CLASS_NAME_ACTIVE}`, parent)
+      .forEach(node => node.classList.remove(CLASS_NAME_ACTIVE))
   }
 
   _getNewObserver() {
@@ -182,7 +179,7 @@ class ScrollSpy extends BaseComponent {
 
     const callback = entries => {
       const parentScrollTop = this._element.scrollTop
-      for (const entry of entries) {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
           const { offsetTop } = entry.target
           const userScrollsDown = parentScrollTop >= previousParentScrollTop
@@ -192,7 +189,7 @@ class ScrollSpy extends BaseComponent {
             return
           }
 
-          if (!userScrollsDown && offsetTop < previousVisibleEntryTop) { // if we are scrolling up, pick the smallest offsetTop
+          if (!userScrollsDown && offsetTop < previousVisibleEntryTop) {// if we are scrolling up, pick the smallest offsetTop
             activate(entry)
           }
 
@@ -201,7 +198,7 @@ class ScrollSpy extends BaseComponent {
 
         const notVisibleElement = this._targetLinks.find(el => el.hash === `#${entry.target.id}`)
         this._clearActiveClass(notVisibleElement)
-      }
+      })
 
       previousParentScrollTop = this._element.scrollTop
     }
