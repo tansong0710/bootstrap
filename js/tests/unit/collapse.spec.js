@@ -677,7 +677,7 @@ describe('Collapse', () => {
         two: false
       }
 
-      function firstTest() {
+      const firstTest = () => {
         expect(collapseOneOne.classList.contains('show')).toEqual(true)
         expect(collapseOneTwo.classList.contains('show')).toEqual(true)
 
@@ -687,7 +687,7 @@ describe('Collapse', () => {
         triggerTwo.click()
       }
 
-      function secondTest() {
+      const secondTest = () => {
         expect(collapseOneOne.classList.contains('show')).toEqual(false)
         expect(collapseOneTwo.classList.contains('show')).toEqual(false)
 
@@ -759,7 +759,7 @@ describe('Collapse', () => {
       const collapseTwo = fixtureEl.querySelector('#collapseTwo')
       const nestedCollapseOne = fixtureEl.querySelector('#nestedCollapseOne')
 
-      function handlerCollapseOne() {
+      const handlerCollapseOne = () => {
         expect(collapseOne.classList.contains('show')).toEqual(true)
         expect(collapseTwo.classList.contains('show')).toEqual(false)
         expect(nestedCollapseOne.classList.contains('show')).toEqual(false)
@@ -769,7 +769,7 @@ describe('Collapse', () => {
         collapseOne.removeEventListener('shown.bs.collapse', handlerCollapseOne)
       }
 
-      function handlerNestedCollapseOne() {
+      const handlerNestedCollapseOne = () => {
         expect(collapseOne.classList.contains('show')).toEqual(true)
         expect(collapseTwo.classList.contains('show')).toEqual(false)
         expect(nestedCollapseOne.classList.contains('show')).toEqual(true)
