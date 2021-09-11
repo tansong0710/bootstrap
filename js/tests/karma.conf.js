@@ -67,12 +67,12 @@ const conf = {
   files: [
     'node_modules/hammer-simulator/index.js',
     {
-      pattern: 'js/tests/unit/**/!(jquery).spec.js',
+      pattern: 'js/tests/unit/scrollspy.spec.js',
       watched: !BROWSERSTACK
     }
   ],
   preprocessors: {
-    'js/tests/unit/**/*.spec.js': ['rollup']
+    'js/tests/unit/scrollspy.spec.js': ['rollup']
   },
   rollupPreprocessor: {
     plugins: [

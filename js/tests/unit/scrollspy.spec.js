@@ -7,6 +7,11 @@ import { clearFixture, createEvent, getFixture, jQueryMock } from '../helpers/fi
 describe('ScrollSpy', () => {
   let fixtureEl
 
+  const scrollTo = (el, height) => {
+    // el.scrollTo({ top: height })
+    el.scrollTop = height
+  }
+
   const onScrollStop = (callback, element, timeout = 30) => {
     let handle = null
     const onScroll = function () {
@@ -36,25 +41,34 @@ describe('ScrollSpy', () => {
     ].join('')
   }
 
-  const testElementIsActiveAfterScroll = ({ elementSelector, targetSelector, contentEl, scrollSpy, spy, cb }) => {
+  const testElementIsActiveAfterScroll = ({ elementSelector, targetSelector, contentEl, scrollSpy, cb }) => {
+    // eslint-disable-next-line no-console
+    console.log('-------------------------------------------')
     const element = fixtureEl.querySelector(elementSelector)
     const target = fixtureEl.querySelector(targetSelector)
     // add top padding to fix Chrome on Android failures
-    const paddingTop = 5
+    const paddingTop = 0
     const parentOffset = getComputedStyle(contentEl).getPropertyValue('position') === 'relative' ? 0 : contentEl.offsetTop
     const scrollHeight = (target.offsetTop - parentOffset) + paddingTop
 
-    function listener() {
+    contentEl.addEventListener('activate.bs.scrollspy', event => {
+      // eslint-disable-next-line no-console
+      console.log(event.relatedTarget)
+      if (scrollSpy._activeTarget !== element) {
+        return
+      }
+
       expect(element.classList.contains('active')).toEqual(true)
       expect(scrollSpy._activeTarget).toEqual(element)
-      spy.calls.reset()
+      expect(event.relatedTarget).toEqual(element)
       cb()
-    }
+    })
+    // eslint-disable-next-line no-console
+    console.log(scrollHeight, target.id, target.offsetTop, parentOffset, paddingTop)
 
     setTimeout(() => { // in case we scroll something before the test
-      onScrollStop(listener, contentEl)
-      contentEl.scrollTo({ top: scrollHeight })
-    }, 50)
+      scrollTo(contentEl, scrollHeight)
+    }, 100)
   }
 
   beforeAll(() => {
@@ -151,7 +165,7 @@ describe('ScrollSpy', () => {
         done()
       }, scrollSpyEl)
 
-      scrollSpyEl.scrollTo({ top: 350 })
+      scrollTo(scrollSpyEl, 350)
     })
 
     it('should only switch "active" class on current target specified w element', done => {
@@ -189,7 +203,7 @@ describe('ScrollSpy', () => {
         done()
       }, scrollSpyEl)
 
-      scrollSpyEl.scrollTo({ top: 350 })
+      scrollTo(scrollSpyEl, 350)
     })
 
     it('should correctly select middle navigation option when large offset is used', done => {
@@ -225,7 +239,7 @@ describe('ScrollSpy', () => {
         done()
       }, contentEl)
 
-      contentEl.scrollTo({ top: 550 })
+      scrollTo(contentEl, 550)
     })
 
     it('should add the active class to the correct element', done => {
@@ -247,22 +261,19 @@ describe('ScrollSpy', () => {
         offset: 0,
         target: '.navbar'
       })
-      const spy = spyOn(scrollSpy, '_process').and.callThrough()
 
       testElementIsActiveAfterScroll({
         elementSelector: '#a-1',
         targetSelector: '#div-1',
         contentEl,
         scrollSpy,
-        spy,
         cb: () => {
           testElementIsActiveAfterScroll({
             elementSelector: '#a-2',
             targetSelector: '#div-2',
             contentEl,
             scrollSpy,
-            spy,
-            cb: () => done()
+            cb: done
           })
         }
       })
@@ -287,22 +298,19 @@ describe('ScrollSpy', () => {
         offset: 0,
         target: '.navbar'
       })
-      const spy = spyOn(scrollSpy, '_process').and.callThrough()
 
       testElementIsActiveAfterScroll({
         elementSelector: '#a-1',
         targetSelector: '#div-1',
         contentEl,
         scrollSpy,
-        spy,
         cb: () => {
           testElementIsActiveAfterScroll({
             elementSelector: '#a-2',
             targetSelector: '#div-2',
             contentEl,
             scrollSpy,
-            spy,
-            cb: () => done()
+            cb: done
           })
         }
       })
@@ -327,22 +335,19 @@ describe('ScrollSpy', () => {
         offset: 0,
         target: '.navbar'
       })
-      const spy = spyOn(scrollSpy, '_process').and.callThrough()
 
       testElementIsActiveAfterScroll({
         elementSelector: '#a-1',
         targetSelector: '#div-1',
         contentEl,
         scrollSpy,
-        spy,
         cb: () => {
           testElementIsActiveAfterScroll({
             elementSelector: '#a-2',
             targetSelector: '#div-2',
             contentEl,
             scrollSpy,
-            spy,
-            cb: () => done()
+            cb: done
           })
         }
       })
@@ -382,10 +387,10 @@ describe('ScrollSpy', () => {
           expect(active()).toBeNull()
           done()
         }, contentEl)
-        contentEl.scrollTo({ top: 0 })
+        scrollTo(contentEl, 0)
       }, contentEl)
 
-      contentEl.scrollTo({ top: 201 })
+      scrollTo(contentEl, 201)
     })
 
     it('should not clear selection if above the first section and first section is at the top', done => {
@@ -428,10 +433,10 @@ describe('ScrollSpy', () => {
           done()
         }, contentEl)
 
-        contentEl.scrollTo({ top: 0 })
+        scrollTo(contentEl, 0)
       }, contentEl)
 
-      contentEl.scrollTo({ top: startOfSectionTwo })
+      scrollTo(contentEl, startOfSectionTwo)
     })
 
     it('should correctly select navigation element on backward scrolling when each target section height is 100%', done => {
@@ -459,46 +464,41 @@ describe('ScrollSpy', () => {
         offset: 0,
         target: '.navbar'
       })
-      const spy = spyOn(scrollSpy, '_process').and.callThrough()
 
+      scrollTo(contentEl, 0)
       testElementIsActiveAfterScroll({
         elementSelector: '#li-100-5',
         targetSelector: '#div-100-5',
-        scrollSpy,
-        spy,
         contentEl,
-        cb() {
-          contentEl.scrollTo({ top: 0 })
+        scrollSpy,
+        cb: () => {
+          scrollTo(contentEl, 0)
           testElementIsActiveAfterScroll({
             elementSelector: '#li-100-4',
             targetSelector: '#div-100-4',
-            scrollSpy,
-            spy,
             contentEl,
-            cb() {
-              contentEl.scrollTo({ top: 0 })
+            scrollSpy,
+            cb: () => {
+              scrollTo(contentEl, 0)
               testElementIsActiveAfterScroll({
                 elementSelector: '#li-100-3',
                 targetSelector: '#div-100-3',
-                scrollSpy,
-                spy,
                 contentEl,
-                cb() {
-                  contentEl.scrollTo({ top: 0 })
+                scrollSpy,
+                cb: () => {
+                  scrollTo(contentEl, 0)
                   testElementIsActiveAfterScroll({
                     elementSelector: '#li-100-2',
                     targetSelector: '#div-100-2',
-                    scrollSpy,
-                    spy,
                     contentEl,
-                    cb() {
-                      contentEl.scrollTo({ top: 0 })
+                    scrollSpy,
+                    cb: () => {
+                      scrollTo(contentEl, 0)
                       testElementIsActiveAfterScroll({
                         elementSelector: '#li-100-1',
                         targetSelector: '#div-100-1',
-                        scrollSpy,
-                        spy,
                         contentEl,
+                        scrollSpy,
                         cb: done
                       })
                     }
