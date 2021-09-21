@@ -94,7 +94,7 @@
     "popper.js": "^1.16.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.15.4",
+    "@babel/cli": "^7.15.7",
     "@babel/core": "^7.15.5",
     "@babel/preset-env": "^7.15.6",
     "@rollup/plugin-babel": "^5.3.0",
@@ -133,7 +133,7 @@
     "popper.js": "^1.16.1",
     "postcss": "^8.3.6",
     "postcss-cli": "^8.3.1",
-    "qunit": "^2.17.1",
+    "qunit": "^2.17.2",
     "rollup": "^2.56.3",
     "shelljs": "^0.8.4",
     "sinon": "^7.5.0",
